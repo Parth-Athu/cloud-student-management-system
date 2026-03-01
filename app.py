@@ -49,7 +49,20 @@ def add_student():
 
     return render_template("add_student.html")
 
+#----------------- VIEW STUDENTS ----------------
+@app.route("/students")
+def view_students():
+    connection = get_connection()
+    cursor = connection.cursor()
 
+    cursor.execute("SELECT * FROM students")
+    students = cursor.fetchall()
+
+    connection.close()
+
+    return render_template("students.html", students=students)
+
+    
 # ---------------- RUN APP ----------------
 if __name__ == "__main__":
     app.run(debug=True)
