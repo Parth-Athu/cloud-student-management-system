@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, request, redirect
 import pymysql
 
 app = Flask(__name__)
@@ -11,10 +11,13 @@ def get_connection():
         database="student_db"
     )
 
+# ---------------- HOME ----------------
 @app.route("/")
 def home():
     return "Student Management System Running 🚀"
 
+
+# ---------------- DB TEST ----------------
 @app.route("/test-db")
 def test_db():
     connection = get_connection()
@@ -24,5 +27,29 @@ def test_db():
     connection.close()
     return f"Database Connected: {result}"
 
+
+# ---------------- ADD STUDENT ----------------
+@app.route("/add-student", methods=["GET", "POST"])
+def add_student():
+    if request.method == "POST":
+        name = request.form["name"]
+        email = request.form["email"]
+        course = request.form["course"]
+
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        sql = "INSERT INTO students (name, email, course) VALUES (%s, %s, %s)"
+        cursor.execute(sql, (name, email, course))
+
+        connection.commit()
+        connection.close()
+
+        return redirect("/add-student")
+
+    return render_template("add_student.html")
+
+
+# ---------------- RUN APP ----------------
 if __name__ == "__main__":
     app.run(debug=True)
