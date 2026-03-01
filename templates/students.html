@@ -6,6 +6,8 @@
         <th>Name</th>
         <th>Email</th>
         <th>Course</th>
+        <th>Delete</th>
+        <th>Edit</th>
     </tr>
 
     {% for student in students %}
@@ -14,6 +16,8 @@
         <td>{{ student[1] }}</td>
         <td>{{ student[2] }}</td>
         <td>{{ student[3] }}</td>
+        <td><a href="/delete/{{ student[0] }}">Delete</a></td>
+        <td> <a href="/edit/{{ student[0] }}">Edit</a></td>
     </tr>
     {% endfor %}
 </table>

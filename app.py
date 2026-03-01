@@ -62,7 +62,42 @@ def view_students():
 
     return render_template("students.html", students=students)
 
-    
+#----------------- DELETE STUDENT ----------------
+@app.route("/delete/<int:id>")
+def delete_student(id):
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("DELETE FROM students WHERE id=%s", (id,))
+    connection.commit()
+    connection.close()
+
+    return redirect("/students")
+
+#----------------- UPDATE STUDENT ----------------
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+def edit_student(id):
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    if request.method == "POST":
+        name = request.form["name"]
+        email = request.form["email"]
+        course = request.form["course"]
+
+        cursor.execute(
+            "UPDATE students SET name=%s, email=%s, course=%s WHERE id=%s",
+            (name, email, course, id)
+        )
+        connection.commit()
+        connection.close()
+        return redirect("/students")
+
+    cursor.execute("SELECT * FROM students WHERE id=%s", (id,))
+    student = cursor.fetchone()
+    connection.close()
+
+    return render_template("edit_student.html", student=student)
 # ---------------- RUN APP ----------------
 if __name__ == "__main__":
     app.run(debug=True)
